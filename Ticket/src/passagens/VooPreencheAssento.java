@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 
 public class VooPreencheAssento{
 
+    public static String local;
     
     /**
      * Metodo que le um arquivo txt com uma relacao textos separados com ';'e 
@@ -25,7 +26,7 @@ public class VooPreencheAssento{
     public static ArrayList<String> RetornaListaArquivoTxt(String filename){
         ArrayList<String> temp = new ArrayList<String>();
         String msg = "";
-        String local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
+        local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
         String name = filename;
         name = local+filename;
         String arquivoSelecionado = retornaNomeArquivo(name);
@@ -94,7 +95,7 @@ public class VooPreencheAssento{
 
     public static void GeraNovaBaseTextos(String filename, String[] vtexto){
         // Nome da base de dados (calculada pelo metodo 'retornaNomeArquivo')
-        String local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
+        local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
         String name = filename;
         name = local+filename;
         //String vtexto ="teste";
@@ -329,7 +330,7 @@ public class VooPreencheAssento{
 
     public static void GeraNovaBaseAssentos(String filename, Integer E, Integer B, Integer P){
         // Nome da base de dados (calculada pelo metodo 'retornaNomeArquivo')
-        String local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
+        local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
         String name = filename;
         name = local+filename;
         String msg ="";
@@ -422,7 +423,7 @@ public class VooPreencheAssento{
     public static ArrayList<String> RetornaAssentosDisponiveisVoo(String filename){
         ArrayList<String> temp = new ArrayList<String>();
         String msg = "";
-        String local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
+        local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
         String name = filename;
         name = local+filename;
         String vooSelecionado = retornaNomeArquivo(name);
@@ -545,7 +546,7 @@ public class VooPreencheAssento{
         String temp;
         String var = "{--;";
         String msg = "";
-        String local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
+        local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
         String name = filename;
         name = local+filename;
         //String vooSelecionado = retornaNomeArquivo(name);
