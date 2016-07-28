@@ -44,7 +44,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
     String msg ="";
     // Creates an icon, attached to a label to act as a banner  for the program
     // Get resource is required for finding the image within the JAR achive once packed
-    final public ImageIcon icon = (new ImageIcon(getClass().getResource("imagens/ProgramBanner.png")));
+    final public ImageIcon icon = (new ImageIcon(getClass().getResource("../imagens/ProgramBanner.png")));
     JLabel iconHolder = new JLabel(icon);
 
     //Elementos GUI
