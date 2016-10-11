@@ -34,10 +34,11 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
 
     VooPreencheAssento util = new VooPreencheAssento();
 
-    private String local =""; //diretorio ondes serao gravados/lidos os arquivos gerados pelo gerenciador de assentos.
+    private String local; 
     private String filename ="vooHoje";
     private String tipoFile = "txt";
     private String name = "";
+    
     //name = local + filename;
     //String vtexto ="teste";
 
@@ -101,7 +102,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
     // JComboBox cbxVooCombo = new JComboBox(listaVoos);
 
     // ArrayList that holds the vaules of seats that are available
-    ArrayList<String> seatArrayList = new ArrayList<String>();
+    ArrayList<String> seatArrayList = new ArrayList<>();
 
     String voo = new String();
 
@@ -148,6 +149,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
      * Metodo construtor TelaMostraAssentos
      */
     public TelaMostraAssentos(){
+        this.local = "";
         //public String listaVoosArray[] = {"","VOO1004-05082016","VOO1005-06082016","VOO1006-07082016","VOO1006-07082016"}; //buscar voo
 
         //String listaVoos[] = {"----", "1004", "1005", "1006", "1007", "1008"};
@@ -157,13 +159,18 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
 
     /**
      * Metodo para criar tela com os assentos e classes desejadas.
-     * @param
-     * 
-     * @return
+     * @param tipoLayout
+     * @param ve
+     * @param vb
+     * @param vf
+     * @param ex
+     * @param bx
+     * @param fx
      * 
      */
     public TelaMostraAssentos(boolean tipoLayout, int ve, int vb, int vf, int ex, int bx, int fx)   // Metodo construtor para a interface (GUI)
     {
+        this.local = "";
         //GroupLayout layout = new GroupLayout(this);
         //FlowLayout layout;
         // layout = new FlowLayout();
@@ -260,8 +267,10 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
      * Metodo para interacao com as acoes da tela
      * 
      * A C T I O N - E V E N T
+     * @param action
      */
     //STARTOF ACTIONEVENTS
+    @Override
     public void actionPerformed (ActionEvent action)    // Method that contain all conditions where an ActionEvent is needed
     {
         /*
@@ -269,9 +278,8 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
         action.getSource() == p2 ||
         action.getSource() == p3){
         repaint();
-
-        }
          */
+        
         String msg = "";
         // ActionListener for Combobox that displays Film Viewing Times
         if (action.getSource() == cbxVooCombo)
@@ -289,11 +297,11 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
             // Call DataBase Generator (will generate fresh database for that time if one does not  ist)
             //db.FullDataBaseGeneration(vooSelecionado);
             //db.GeraNovaBaseAssentos(vooSelecionado, 40, 30, 20);
-            db.GeraNovaBaseAssentos(vooSelecionado+".txt", e, b, f);
+            VooPreencheAssento.GeraNovaBaseAssentos(vooSelecionado+".txt", e, b, f);
 
             //Fetch array of available seats and pass it to the global ArrayList 'seatArrayList'
             //ArrayList<Integer> vooArray  = db.AvailableAssentosArrayReturn(vooSelecionado);
-            ArrayList<String> vooArray  = db.RetornaAssentosDisponiveisVoo(vooSelecionado);
+            ArrayList<String> vooArray  = VooPreencheAssento.RetornaAssentosDisponiveisVoo(vooSelecionado);
             seatArrayList = vooArray;
 
             //Reset any user selection of tickets when a new database is selected
@@ -321,7 +329,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
             // If the arraylist no longer contains a zero (default answer)
             // Add a zero at the beginning of the array
 
-            if(seatArrayList.get(0) == "000"){
+            if("000".equals(seatArrayList.get(0))){
 
             }else{
                 seatArrayList.add(0, "000");
@@ -333,16 +341,22 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
             seatArrayList.add(0, "000");
             }
              */
-
             // Add contents of the ArrayList to each combobox that display available seats
-            for (int z =0; z< seatArrayList.size(); z++)
-            {
-                cbxAssentoCombo1.addItem(seatArrayList.get(z));
-                cbxAssentoCombo2.addItem(seatArrayList.get(z));
-                cbxAssentoCombo3.addItem(seatArrayList.get(z));
-                cbxAssentoCombo4.addItem(seatArrayList.get(z));
-                cbxAssentoCombo5.addItem(seatArrayList.get(z));
-            }
+            seatArrayList.stream().map((seatArrayList1) -> {
+                cbxAssentoCombo1.addItem(seatArrayList1);
+                return seatArrayList1;
+            }).map((seatArrayList1) -> {
+                cbxAssentoCombo2.addItem(seatArrayList1);
+                return seatArrayList1;
+            }).map((seatArrayList1) -> {
+                cbxAssentoCombo3.addItem(seatArrayList1);
+                return seatArrayList1;
+            }).map((seatArrayList1) -> {
+                cbxAssentoCombo4.addItem(seatArrayList1);
+                return seatArrayList1;
+            }).forEach((seatArrayList1) -> {
+                cbxAssentoCombo5.addItem(seatArrayList1);
+            });
 
             // Get new total price as a String and affix to a Label for display on Frame
             String totalString = getTotal();
@@ -551,20 +565,18 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
                     String stringLine;
                     while ((stringLine = br.readLine()) != null)
                     {
-                        // Create dependencies for writing to same file
-                        BufferedWriter fw = new BufferedWriter(new FileWriter(voo));
-
-                        int x=0;
-                        // Iterate through the new edited array (orginal array minus selected seat)
-                        while(x<seatArrayList.size())
-                        {
-                            // Rewrite every line of the text file with each entry in the new array
-                            String line = seatArrayList.get(x).toString();
-                            fw.write(line + ";");
-                            x++;
+                        try ( // Create dependencies for writing to same file
+                                BufferedWriter fw = new BufferedWriter(new FileWriter(voo))) {
+                            int x=0;
+                            // Iterate through the new edited array (orginal array minus selected seat)
+                            while(x<seatArrayList.size())
+                            {
+                                // Rewrite every line of the text file with each entry in the new array
+                                String line = seatArrayList.get(x);
+                                fw.write(line + ";");
+                                x++;
+                            }
                         }
-                        //Close the file writing dependency
-                        fw.close();
 
                     }
 
@@ -620,16 +632,15 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
                     fileToDelete.delete();
 
                     // Delete all the databases (stated by name)
-
                     //int size = toppings.length;
-                    for (int i=0; i<listaVoos.length; i++){
-                        File file = new File(listaVoos[i]+".txt");
+                    for (String listaVoo : listaVoos) {
+                        File file = new File(listaVoo + ".txt");
                         file.delete();
-                        System.out.println("Arquivo :"+listaVoos[i]+".txt"+" deletado!");
+                        System.out.println("Arquivo :" + listaVoo + ".txt" + " deletado!");
                     }
 
                     // Create new instance of the program (hence restart it)
-                    new TelaMostraAssentos(coluna, e, b, f, e_param, b_param, f_param);
+                    TelaMostraAssentos telaMostraAssentos = new TelaMostraAssentos(coluna, e, b, f, e_param, b_param, f_param);
                 }
             }
         }
@@ -642,6 +653,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
      * Metodo retorna o valor total da compra.
      * 
      * 
+     * @return 
      */
     // Method that returns total price as as String
     public String getTotal()
@@ -686,7 +698,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
         if (a == 0)
         {System.out.println("Program Restart Initiated");
             TelaMostraAssentos.this.dispose();
-            new TelaMostraAssentos(coluna, e, b, f, e_param, b_param, f_param);
+            TelaMostraAssentos telaMostraAssentos = new TelaMostraAssentos(coluna, e, b, f, e_param, b_param, f_param);
             System.out.println("Nova instancia com os parametros: "+ coluna +" "+ e +" "+ b +" "+ f +" "+ e_param +" "+ b_param +" "+ f_param);
         }
         // If no, then instance of program is deleted but no new instance is created, hence ending the program
@@ -727,6 +739,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
      * A E R O N A V E
      * 
      */
+    @Override
     public void paint(Graphics g)
     {
         //ArrayList<Integer> list = new ArrayList<Integer>(array);
@@ -857,7 +870,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
             // For each column, loop while there are Rows..
             {
                 // [As above]
-                rowString = new Integer((i+(classeEconomicaAssentosCol*x))+1001).toString();
+                rowString = Integer.toString((i+(classeEconomicaAssentosCol*x))+1001);
                 rowString = "E" + rowString.substring(1);
 
                 if (Integer.parseInt(rowString.substring(1))<=e){
@@ -920,7 +933,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
 
             for (int x=0; x<classeEmpresarialAssentosRow; x++)
             {
-                rowString = new Integer ((classeE+i+(classeEmpresarialAssentosCol*x))+1001).toString();
+                rowString = Integer.toString((classeE+i+(classeEmpresarialAssentosCol*x))+1001);
                 rowString = "B" + rowString.substring(1);
 
                 if (Integer.parseInt(rowString.substring(1))<=(b+e)){
@@ -977,7 +990,7 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
 
             for(int x=0; x<classePrimeiraAssentosRow; x++)
             {
-                rowString = new Integer (((classeE+classeB)+i+(classePrimeiraAssentosCol*x)+1001)).toString();
+                rowString = Integer.toString(((classeE+classeB)+i+(classePrimeiraAssentosCol*x)+1001));
                 rowString = "P" + rowString.substring(1);
 
                 if (Integer.parseInt(rowString.substring(1))<=(b+e+f)){
@@ -1025,6 +1038,6 @@ public class TelaMostraAssentos extends JFrame implements ActionListener
 
     public static void main (String[] args)     // Main Method Declaration
     {
-        new TelaMostraAssentos(true, 38, 22, 17, 3,3, 4);                             // Cria uma nova instancia de TelaMostraAssentos.
+        TelaMostraAssentos telaMostraAssentos = new TelaMostraAssentos(true, 38, 22, 17, 3,3, 4); // Cria uma nova instancia de TelaMostraAssentos.
     }
 }
