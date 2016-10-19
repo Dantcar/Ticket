@@ -516,7 +516,7 @@ public class VooPreencheAssento {
                     }
                     var = var + "}";
                     in.close();
-                    //  msg = msg + "String[] temp gerado com sucesso! \n";
+                   // msg = msg + "String[] temp gerado com sucesso! \n"; //comentar depois
                 }
             } catch (Exception ex) {
                 msg = msg + "Erro 7 no Metodo - RetornaStringArquivoVoo()\n";
